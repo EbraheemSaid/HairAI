@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Minimal reset to let Tailwind control layout */
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  margin: 0;
+}

@@ -1,0 +1,1353 @@
+{
+	"info": {
+		"_postman_id": "hairai-api-full-collection",
+		"name": "HairAI API - Complete Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Complete Postman collection for the HairAI SaaS platform API. This collection includes all endpoints with documentation and examples for each feature."
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account. Users can register with or without a clinic ID. If registering with a clinic ID, they must have been invited to that clinic."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePassword123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login and obtain JWT token for authenticated requests. The token should be included in the Authorization header as 'Bearer {token}' for all subsequent requests."
+					},
+					"response": []
+				},
+				{
+					"name": "Bootstrap SuperAdmin (Development Only)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/bootstrap-admin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"bootstrap-admin"
+							]
+						},
+						"description": "Create the initial SuperAdmin user for the platform. This endpoint should only be used in development environments. In production, the SuperAdmin should be created through a secure process."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, login, and initial SuperAdmin creation."
+		},
+		{
+			"name": "Admin Functions",
+			"item": [
+				{
+					"name": "Create Clinic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Dermatology Clinic\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/clinics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"clinics"
+							]
+						},
+						"description": "Create a new clinic. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Activate Subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\",\n  \"planId\": \"00000000-0000-0000-0000-000000000000\",\n  \"currentPeriodStart\": \"2023-01-01T00:00:00.000Z\",\n  \"currentPeriodEnd\": \"2023-12-31T00:00:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/subscriptions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"subscriptions"
+							]
+						},
+						"description": "Manually activate a subscription for a clinic. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Log Payment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subscriptionId\": \"00000000-0000-0000-0000-000000000000\",\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"status\": \"Succeeded\",\n  \"paymentGatewayReference\": \"PAY123456789\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/payments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"payments"
+							]
+						},
+						"description": "Manually log a payment for a subscription. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						},
+						"description": "Retrieve a list of all users in the system. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Smith\",\n  \"email\": \"jane.smith@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\",\n  \"role\": \"Doctor\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						},
+						"description": "Create a new user account. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Delete a user account. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Activate User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000/activate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"00000000-0000-0000-0000-000000000000",
+								"activate"
+							]
+						},
+						"description": "Activate a user account. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/00000000-0000-0000-0000-000000000000/deactivate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"00000000-0000-0000-0000-000000000000",
+								"deactivate"
+							]
+						},
+						"description": "Deactivate a user account. Only SuperAdmin users can access this endpoint."
+					},
+					"response": []
+				}
+			],
+			"description": "Admin functions for managing clinics, subscriptions, payments, and users. These endpoints require SuperAdmin role authorization."
+		},
+		{
+			"name": "Clinics",
+			"item": [
+				{
+					"name": "Get All Clinics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/clinics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clinics"
+							]
+						},
+						"description": "Retrieve a list of all clinics in the system. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Clinic by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/clinics/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clinics",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Retrieve details of a specific clinic by its ID. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Clinic",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Dermatology Clinic\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clinics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clinics"
+							]
+						},
+						"description": "Create a new clinic. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Clinic",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Dermatology Clinic\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/clinics/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"clinics",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Update an existing clinic. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing clinics in the system."
+		},
+		{
+			"name": "Patients",
+			"item": [
+				{
+					"name": "Get Patients for Clinic",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/patients?clinicId=00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"patients"
+							],
+							"query": [
+								{
+									"key": "clinicId",
+									"value": "00000000-0000-0000-0000-000000000000"
+								}
+							]
+						},
+						"description": "Retrieve a list of patients for a specific clinic. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Patient by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/patients/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"patients",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Retrieve details of a specific patient by its ID. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Patient",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\",\n  \"clinicPatientId\": \"PAT123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"dateOfBirth\": \"1980-01-01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/patients",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"patients"
+							]
+						},
+						"description": "Create a new patient. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Patient",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clinicPatientId\": \"PAT123\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Smith\",\n  \"dateOfBirth\": \"1980-01-01\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/patients/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"patients",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Update an existing patient. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing patients in the system."
+		},
+		{
+			"name": "Calibration Profiles",
+			"item": [
+				{
+					"name": "Get Active Profiles for Clinic",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/calibration/active?clinicId=00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"calibration",
+								"active"
+							],
+							"query": [
+								{
+									"key": "clinicId",
+									"value": "00000000-0000-0000-0000-000000000000"
+								}
+							]
+						},
+						"description": "Retrieve active calibration profiles for a specific clinic. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Calibration Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\",\n  \"profileName\": \"Camera Model XYZ\",\n  \"calibrationData\": {\n    \"pixelsPerCm\": 100,\n    \"cameraModel\": \"XYZ-123\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/calibration",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"calibration"
+							]
+						},
+						"description": "Create a new calibration profile. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Calibration Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"profileName\": \"Updated Camera Model XYZ\",\n  \"calibrationData\": {\n    \"pixelsPerCm\": 120,\n    \"cameraModel\": \"XYZ-123\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/calibration/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"calibration",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Update an existing calibration profile. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Deactivate Calibration Profile",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/calibration/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"calibration",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Deactivate a calibration profile. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing calibration profiles for trichoscope cameras."
+		},
+		{
+			"name": "Analysis",
+			"item": [
+				{
+					"name": "Get Analysis Sessions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/sessions?patientId=00000000-0000-0000-0000-000000000000&clinicId=00000000-0000-0000-0000-000000000000&status=Active&fromDate=2023-01-01&toDate=2023-12-31&pageNumber=1&pageSize=10&sortBy=SessionDate&sortDirection=desc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"sessions"
+							],
+							"query": [
+								{
+									"key": "patientId",
+									"value": "00000000-0000-0000-0000-000000000000",
+									"disabled": true
+								},
+								{
+									"key": "clinicId",
+									"value": "00000000-0000-0000-0000-000000000000",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "Active",
+									"disabled": true
+								},
+								{
+									"key": "fromDate",
+									"value": "2023-01-01",
+									"disabled": true
+								},
+								{
+									"key": "toDate",
+									"value": "2023-12-31",
+									"disabled": true
+								},
+								{
+									"key": "pageNumber",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "SessionDate"
+								},
+								{
+									"key": "sortDirection",
+									"value": "desc"
+								}
+							]
+						},
+						"description": "Get paginated list of analysis sessions with filtering and sorting options. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Session Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/session/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"session",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Get analysis session details including all analysis jobs. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/job/00000000-0000-0000-0000-000000000000/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"job",
+								"00000000-0000-0000-0000-000000000000",
+								"status"
+							]
+						},
+						"description": "Get the status of a specific analysis job. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Job Result",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/job/00000000-0000-0000-0000-000000000000/result",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"job",
+								"00000000-0000-0000-0000-000000000000",
+								"result"
+							]
+						},
+						"description": "Get the result of a completed analysis job. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Analysis Session",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"patientId\": \"00000000-0000-0000-0000-000000000000\",\n  \"createdByUserId\": \"00000000-0000-0000-0000-000000000000\",\n  \"sessionDate\": \"2023-06-15\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/session",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"session"
+							]
+						},
+						"description": "Create a new analysis session for a patient visit. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Analysis Image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sessionId\": \"00000000-0000-0000-0000-000000000000\",\n  \"patientId\": \"00000000-0000-0000-0000-000000000000\",\n  \"calibrationProfileId\": \"00000000-0000-0000-0000-000000000000\",\n  \"createdByUserId\": \"00000000-0000-0000-0000-000000000000\",\n  \"locationTag\": \"Crown\",\n  \"imageStorageKey\": \"path/to/image.jpg\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/job",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"job"
+							]
+						},
+						"description": "Upload an image for analysis. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Doctor Notes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\"These notes provide additional context for the analysis results.\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/job/00000000-0000-0000-0000-000000000000/notes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"job",
+								"00000000-0000-0000-0000-000000000000",
+								"notes"
+							]
+						},
+						"description": "Add doctor notes to an analysis job. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Final Report",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/analysis/session/00000000-0000-0000-0000-000000000000/report",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"analysis",
+								"session",
+								"00000000-0000-0000-0000-000000000000",
+								"report"
+							]
+						},
+						"description": "Generate a final report for an analysis session. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing analysis sessions, jobs, and results."
+		},
+		{
+			"name": "Subscriptions",
+			"item": [
+				{
+					"name": "Get All Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscriptions/plans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscriptions",
+								"plans"
+							]
+						},
+						"description": "Retrieve a list of all subscription plans. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subscription for Clinic",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscriptions/clinic/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscriptions",
+								"clinic",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Retrieve subscription details for a specific clinic. Accessible to authenticated users."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\",\n  \"planId\": \"00000000-0000-0000-0000-000000000000\",\n  \"currentPeriodStart\": \"2023-01-01T00:00:00.000Z\",\n  \"currentPeriodEnd\": \"2023-12-31T00:00:00.000Z\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/subscriptions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscriptions"
+							]
+						},
+						"description": "Create a new subscription. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Subscription",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/subscriptions/00000000-0000-0000-0000-000000000000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"subscriptions",
+								"00000000-0000-0000-0000-000000000000"
+							]
+						},
+						"description": "Cancel an existing subscription. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing subscriptions and plans."
+		},
+		{
+			"name": "Invitations",
+			"item": [
+				{
+					"name": "Get Invitation by Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/invitations/invitation-token-here",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invitations",
+								"invitation-token-here"
+							]
+						},
+						"description": "Retrieve invitation details by token. This endpoint is publicly accessible for users to view their invitation."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Invitation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"clinicId\": \"00000000-0000-0000-0000-000000000000\",\n  \"invitedByUserId\": \"00000000-0000-0000-0000-000000000000\",\n  \"email\": \"new.user@example.com\",\n  \"role\": \"Doctor\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/invitations",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invitations"
+							]
+						},
+						"description": "Create a new invitation for a user to join a clinic. Accessible to authenticated users with appropriate permissions."
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Invitation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"token\": \"invitation-token-here\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"password\": \"SecurePassword123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/invitations/accept",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"invitations",
+								"accept"
+							]
+						},
+						"description": "Accept an invitation and create a user account. Accessible to authenticated users."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing user invitations to clinics."
+		},
+		{
+			"name": "Payments",
+			"item": [
+				{
+					"name": "Handle Payment Webhook",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"paymentData\": {\n    \"transactionId\": \"PAY123456789\",\n    \"amount\": 99.99,\n    \"currency\": \"USD\",\n    \"status\": \"Succeeded\"\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/payments/webhook",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"webhook"
+							]
+						},
+						"description": "Handle payment webhook from payment gateway. Accessible to payment gateway services."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for handling payment-related operations."
+		},
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check the health status of the API service."
+					},
+					"response": []
+				}
+			],
+			"description": "Health check endpoint for monitoring the API service."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

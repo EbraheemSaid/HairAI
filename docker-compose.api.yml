@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: hairai_user
+      POSTGRES_PASSWORD: hairai_password
+      POSTGRES_DB: hairai_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - hairai-network
+
+  # Backend API
+  backend-api:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=postgres;Port=5432;Database=hairai_db;User Id=hairai_user;Password=hairai_password;
+      - RabbitMQ__ConnectionString=amqp://hairai_user:hairai_password@rabbitmq:5672
+    ports:
+      - "5000:8080"
+    depends_on:
+      - postgres
+    networks:
+      - hairai-network
+
+volumes:
+  postgres_data:
+
+networks:
+  hairai-network:
+    driver: bridge

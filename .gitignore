@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+**/bin/
+**/obj/
+# SECURITY: Prevent compiled config files with secrets
+**/bin/**/appsettings*.json
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.production.local
+
+# Docker
+.docker/
+
+# NuGet
+*.nuget.props
+*.nuget.targets
+packages/
+*.nupkg
+*.snupkg
+*nuget-*.*
+
+# Rider
+*.DotSettings.user
+
+# VS Code
+*.code-workspace
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+ehthumbs_vista.db
+*.stackdump
+*.cache
