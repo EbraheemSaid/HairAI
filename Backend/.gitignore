@@ -1,0 +1,128 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Environment and secrets
+.env
+.env.local
+.env.production
+.env.staging
+*.env
+appsettings.Production.json
+appsettings.Staging.json
+secrets.json
+launchSettings.json
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Temporary files
+*.tmp
+*.temp
+*~
+.DS_Store
+Thumbs.db
+
+# NuGet packages
+*.nupkg
+**/packages/*
+!**/packages/build/
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.trx
+*.coverage
+*.coveragexml
+
+# Docker files
+Dockerfile.prod
+docker-compose.prod.yml
+.dockerignore
+
+# Security and credential files
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+connection-strings.txt
+api-keys.txt
+credentials/
+secrets/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Certificate files
+*.crt
+*.pem
+*.key
+*.p7b
+*.p7c
+*.p12
+*.pfx
+*.cer
+
+# Migration files with sensitive data
+*migration-data*
+*seed-data*
+backup-*.sql
+
+# Local environment files
+.env.development.local
+.env.test.local
+.env.production.local 

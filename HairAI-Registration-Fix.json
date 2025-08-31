@@ -1,0 +1,157 @@
+{
+  "info": {
+    "name": "HairAI Registration Flow Fix",
+    "description": "Correct registration flow for HairAI with invitation system"
+  },
+  "item": [
+    {
+      "name": "1. Create Test Clinic (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Hair Clinic\",\n  \"adminEmail\": \"admin@testclinic.com\",\n  \"adminPassword\": \"SecurePassword123!\",\n  \"adminFirstName\": \"Admin\",\n  \"adminLastName\": \"User\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/admin/clinics",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "admin", "clinics"]
+        },
+        "description": "Creates a clinic and admin user - this bypasses the invitation system"
+      }
+    },
+    {
+      "name": "2. Login as Admin",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "    if (response.data && response.data.token) {",
+              "        pm.environment.set('authToken', response.data.token);",
+              "        pm.environment.set('adminUserId', response.data.userId);",
+              "        console.log('Admin token saved');",
+              "    }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@testclinic.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Login as the admin user to get authentication token"
+      }
+    },
+    {
+      "name": "3. Create Invitation",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{authToken}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"doctor@clinic.com\",\n  \"role\": \"Doctor\",\n  \"clinicId\": \"{{clinicId}}\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/invitations",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "invitations"]
+        },
+        "description": "Create an invitation for a new user (requires admin authentication)"
+      }
+    },
+    {
+      "name": "4. Register User (With Valid Invitation)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"doctor@clinic.com\",\n  \"password\": \"SecurePassword123!\",\n  \"firstName\": \"Dr. John\",\n  \"lastName\": \"Smith\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/register",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "register"]
+        },
+        "description": "Register user - clinicId comes from invitation, not request body"
+      }
+    },
+    {
+      "name": "5. Login as New User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"doctor@clinic.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/auth/login",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Login as the newly registered user"
+      }
+    }
+  ]
+}
+

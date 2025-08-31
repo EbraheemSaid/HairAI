@@ -1,0 +1,106 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: hairai_user
+          POSTGRES_PASSWORD: hairai_password
+          POSTGRES_DB: hairai_test_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: hairai_user
+          RABBITMQ_DEFAULT_PASS: hairai_password
+        ports:
+          - 5672:5672
+          - 15672:15672
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: |
+          Frontend/App/package-lock.json
+          Frontend/AdminDashboard/package-lock.json
+
+    - name: Restore backend dependencies
+      run: |
+        cd Backend
+        dotnet restore
+
+    - name: Build backend
+      run: |
+        cd Backend
+        dotnet build --no-restore
+
+    - name: Run backend tests
+      run: |
+        cd Backend
+        dotnet test --no-build --verbosity normal
+
+    - name: Install frontend dependencies
+      run: |
+        cd Frontend/App
+        npm ci
+        cd ../AdminDashboard
+        npm ci
+
+    - name: Build frontend apps
+      run: |
+        cd Frontend/App
+        npm run build
+        cd ../AdminDashboard
+        npm run build
+
+    - name: Run frontend linting
+      run: |
+        cd Frontend/App
+        npm run lint
+        cd ../AdminDashboard
+        npm run lint
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Deploy to production
+      run: |
+        echo "Deploying to production..."
+        # Add your deployment steps here
+        # This could include:
+        # - Building Docker images
+        # - Pushing to container registry
+        # - Deploying to Kubernetes/AKS/ECS/etc.
+        # - Running database migrations
+        # - Updating DNS records
