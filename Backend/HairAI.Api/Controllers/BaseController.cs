@@ -13,4 +13,10 @@ public abstract class BaseController : ControllerBase
 
     protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>() 
         ?? throw new InvalidOperationException("IMediator not found in request services");
+
+    protected string GetCurrentUserId()
+    {
+        var userId = HttpContext.User?.FindFirst("uid")?.Value;
+        return userId ?? string.Empty;
+    }
 }
