@@ -50,3 +50,25 @@ packages/
 ehthumbs_vista.db
 *.stackdump
 *.cache
+
+# Markdown files except README.md
+*.md
+!important README.md
+
+# Uploads folder
+uploads/
+
+# Python test files
+*test*.py
+
+# SQL files
+*.sql
+
+# JPG files
+*.jpg
+
+# TXT files
+*.txt
+
+# SH files
+*.sh

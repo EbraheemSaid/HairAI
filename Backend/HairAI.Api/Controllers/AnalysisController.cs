@@ -9,6 +9,8 @@ using HairAI.Application.Features.Analysis.Queries.GetAnalysisSessions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace HairAI.Api.Controllers;
 
@@ -125,12 +127,66 @@ public class AnalysisController : BaseController
     /// <summary>
     /// Upload an image for analysis (rate limited for security)
     /// </summary>
-    /// <param name="command">Image upload details with location tag</param>
+    /// <param name="file">The image file to upload</param>
+    /// <param name="sessionId">The analysis session ID</param>
+    /// <param name="patientId">The patient ID</param>
+    /// <param name="calibrationProfileId">The calibration profile ID</param>
+    /// <param name="locationTag">The location tag for this image</param>
     /// <returns>Analysis job information</returns>
     [HttpPost("job")]
     [EnableRateLimiting("UploadPolicy")] // Enable rate limiting for uploads
-    public async Task<ActionResult<UploadAnalysisImageCommandResponse>> UploadJob(UploadAnalysisImageCommand command)
+    public async Task<ActionResult<UploadAnalysisImageCommandResponse>> UploadJob(
+        IFormFile file,
+        [FromForm] Guid sessionId,
+        [FromForm] Guid patientId,
+        [FromForm] Guid calibrationProfileId,
+        [FromForm] string locationTag)
     {
+        // Validate the file
+        if (file == null || file.Length == 0)
+        {
+            return BadRequest(new { success = false, message = "No file uploaded" });
+        }
+
+        // Validate file type (only allow image files)
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+        var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (!allowedExtensions.Contains(fileExtension))
+        {
+            return BadRequest(new { success = false, message = "Invalid file type. Only JPG and PNG files are allowed." });
+        }
+
+        // Validate file size (limit to 10MB)
+        if (file.Length > 10 * 1024 * 1024)
+        {
+            return BadRequest(new { success = false, message = "File size exceeds 10MB limit." });
+        }
+
+        // Generate a unique filename
+        var fileName = $"{Guid.NewGuid()}{fileExtension}";
+        var uploadPath = Path.Combine("uploads", "analysis_images");
+        var fullPath = Path.Combine(uploadPath, fileName);
+
+        // Ensure the upload directory exists
+        Directory.CreateDirectory(uploadPath);
+
+        // Save the file
+        using (var stream = new FileStream(fullPath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        // Create the command with the file path as ImageStorageKey
+        var command = new UploadAnalysisImageCommand
+        {
+            SessionId = sessionId,
+            PatientId = patientId,
+            CalibrationProfileId = calibrationProfileId,
+            CreatedByUserId = GetCurrentUserId(),
+            LocationTag = locationTag,
+            ImageStorageKey = fullPath
+        };
+
         var response = await Mediator.Send(command);
         return Ok(response);
     }

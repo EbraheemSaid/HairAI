@@ -5,6 +5,7 @@ using HairAI.Api.Services;
 using HairAI.Application.Common.Interfaces;
 using HairAI.Api.Middleware;
 using HairAI.Api.Filters;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -60,6 +61,12 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add(typeof(ApiResponseFilter));
+});
+
+// Configure form options for file uploads
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB limit
 });
 
 // Add CORS - More restrictive for production
@@ -208,22 +215,13 @@ try
     using var scope = app.Services.CreateScope();
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     
-    if (app.Environment.IsDevelopment())
+    // Apply pending migrations for both development and production
+    var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
+    if (pendingMigrations.Any())
     {
-        // Development: Ensure database exists
-        await context.Database.EnsureCreatedAsync();
-        Log.Information("Database ensured created for development");
-    }
-    else
-    {
-        // Production: Apply pending migrations
-        var pendingMigrations = await context.Database.GetPendingMigrationsAsync();
-        if (pendingMigrations.Any())
-        {
-            Log.Information("Applying {Count} pending migrations", pendingMigrations.Count());
-            await context.Database.MigrateAsync();
-            Log.Information("Database migrations applied successfully");
-        }
+        Log.Information("Applying {Count} pending migrations", pendingMigrations.Count());
+        await context.Database.MigrateAsync();
+        Log.Information("Database migrations applied successfully");
     }
 }
 catch (Exception ex)

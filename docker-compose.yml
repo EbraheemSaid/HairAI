@@ -59,6 +59,8 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+    volumes:
+      - ./uploads:/app/uploads
     networks:
       - hairai-network
 
@@ -69,10 +71,12 @@ services:
       dockerfile: Dockerfile
     environment:
       - RABBITMQ_CONNECTION_STRING=amqp://hairai_user:hairai_password@rabbitmq:5672
-      - DATABASE_CONNECTION_STRING=Server=postgres;Port=5432;Database=hairai_db;User Id=hairai_user;Password=hairai_password;
+      - DATABASE_CONNECTION_STRING=postgresql://hairai_user:hairai_password@postgres:5432/hairai_db
     depends_on:
       - postgres
       - rabbitmq
+    volumes:
+      - ./uploads:/app/uploads
     networks:
       - hairai-network
 
